@@ -1,17 +1,97 @@
-const express = require('express');
-const cors = require('cors');
+import 'dotenv/config';
+import express from 'express';
+import cors from 'cors';
+import OpenAI from 'openai';
+
 const app = express();
+const openai = new OpenAI({
+    apiKey: process.env.OPENAI_API_KEY
+  });
+
 const PORT = 3001;
 
 app.use(cors());
 app.use(express.json());
 
-app.post('/chat', (req, res) => {
-  const userMessage = req.body.message;
-  console.log(`Received message: ${userMessage}`);
-  // For now, we are responding with a fixed reply. Later, this will be replaced with OpenAI's response.
-res.json({ reply: `The user said: "${userMessage}"` });
-});
+// Async function to handle chat interaction
+const handleChatInteraction = async (userMessage) => {
+    // Create a new thread for the interaction
+    const myThread = await openai.beta.threads.create();
+    
+    // Add user message to the thread
+    await addUserMsg(myThread.id, userMessage);
+  
+    // Get bot's reply
+    const botReply = await getBotReply(myThread.id);
+    
+    return botReply;
+  };
+
+// Updated addUserMsg to include thread_id as parameter
+const addUserMsg = async (thread_id, message) => {
+    console.log(`Adding user message: ${message}`);
+    const response = await openai.beta.threads.messages.create(thread_id, { role: 'user', content: message });
+    console.log(response);
+  };
+
+const getBotReply = async (thread_id) => {
+    console.log('Creating run..');
+    //console.log(process.env.ASSISTANT_ID)
+    const myRun = await openai.beta.threads.runs.create(
+        thread_id, 
+        {assistant_id: process.env.ASSISTANT_ID});
+    
+    console.log(`Run ID: ${myRun.id}`);
+  
+    let keepRetrievingRun;
+
+    while (myRun.status === "queued" || myRun.status === "in_progress") {
+      keepRetrievingRun = await openai.beta.threads.runs.retrieve(
+        (thread_id),
+        (myRun.id)
+      );
+      console.log(`Run status: ${keepRetrievingRun.status}`);
+
+      if (keepRetrievingRun.status === "completed") {
+        console.log("\n");
+
+        // Step 6: Retrieve the Messages added by the Assistant to the Thread
+        const allMessages = await openai.beta.threads.messages.list(
+          (thread_id)
+        );
+
+        console.log(
+          "------------------------------------------------------------ \n"
+        );
+
+        //console.log("User: ", myThreadMessage.content[0].text.value);
+        //console.log("Assistant: ", allMessages.data[0].content[0].text.value);
+
+        //break;
+        return allMessages.data[0].content[0].text.value;
+      } else if (
+        keepRetrievingRun.status === "queued" ||
+        keepRetrievingRun.status === "in_progress"
+      ) {
+        // pass
+      } else {
+        console.log(`Run status: ${keepRetrievingRun.status}`);
+        break;
+      }
+    }
+
+}
+
+app.post('/chat', async (req, res) => {
+    const userMessage = req.body.message;
+    try {
+      const botReply = await handleChatInteraction(userMessage);
+      res.json({ reply: botReply });
+    } catch (error) {
+      console.error('Error handling chat interaction:', error);
+      res.status(500).json({ error: 'Internal server error' });
+    }
+  });
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
