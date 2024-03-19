@@ -8,16 +8,24 @@ const openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY
   });
 
+let myThread = null;
+
 const PORT = 3001;
 
 app.use(cors());
 app.use(express.json());
 
+const ensureThreadExists = async () => {
+  if (!myThread) {
+    myThread = await openai.beta.threads.create();
+    console.log(`Thread created with ID: ${myThread.id}`);
+  }
+};
+
 // Async function to handle chat interaction
 const handleChatInteraction = async (userMessage) => {
     // Create a new thread for the interaction
-    const myThread = await openai.beta.threads.create();
-    
+    console.log(myThread.id)
     // Add user message to the thread
     await addUserMsg(myThread.id, userMessage);
   
@@ -60,9 +68,9 @@ const getBotReply = async (thread_id) => {
           (thread_id)
         );
 
-        console.log(
-          "------------------------------------------------------------ \n"
-        );
+        //console.log(
+        //  "------------------------------------------------------------ \n"
+        //);
 
         //console.log("User: ", myThreadMessage.content[0].text.value);
         //console.log("Assistant: ", allMessages.data[0].content[0].text.value);
@@ -85,6 +93,7 @@ const getBotReply = async (thread_id) => {
 app.post('/chat', async (req, res) => {
     const userMessage = req.body.message;
     try {
+      await ensureThreadExists();
       const botReply = await handleChatInteraction(userMessage);
       res.json({ reply: botReply });
     } catch (error) {
