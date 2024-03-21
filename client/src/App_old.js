@@ -26,6 +26,7 @@ function App() {
 
   return (
     <div className="App">
+      <h1>Welcome to SweetDreams</h1>
       <div className="chat-container">
         {chatHistory.map((entry, index) => (
           <div key={index}>
