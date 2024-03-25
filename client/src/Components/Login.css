@@ -1,0 +1,43 @@
+.login-page {
+    text-align: center; /* Center text for the login header */
+    padding-top: 20px; /* Add some space at the top */
+}
+
+.form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 50px; /* Adjust the space above the form if needed */
+}
+
+/* Style for inputs and buttons */
+.form input,
+.form button {
+    width: 80%; /* Set a specific width for inputs and buttons */
+    padding: 10px; /* Add some padding for visual comfort */
+    margin: 10px 0; /* Add some margin for spacing between elements */
+    box-sizing: border-box; /* Include padding and border in the element's width */
+    display: block; /* Display block to take up the full width */
+}
+.login-with-google-btn,
+.login-with-microsoft-btn,
+.login-with-apple-btn {
+    margin: 5px 0; /* Add some space around inputs and buttons */
+    display: block; /* Ensure each element sits on its own line */
+}
+
+.login-form button,
+.login-with-google-btn,
+.login-with-microsoft-btn,
+.login-with-apple-btn {
+    cursor: pointer; /* Change cursor to pointer when hovering over buttons */
+}
+
+.message a {
+    color: #007bff; /* Style the link color */
+    text-decoration: none; /* Remove underline from the link */
+}
+
+.message a:hover {
+    text-decoration: underline; /* Add underline on hover for better UX */
+}
