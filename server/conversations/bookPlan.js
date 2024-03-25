@@ -27,6 +27,34 @@ export const handleChatInteraction = async (userMessage) => {
     return botReply;
 };
 
+// Function to find the book plan from each message
+export const getBookPlan = async (thread_id) => {
+    const messages = await openai.beta.threads.messages.list(thread_id);
+    const assistantMessages = messages.data.filter(message => message.role === 'assistant');
+
+    for (const message of assistantMessages) {
+        const text = message.content[0].text.value;
+        const startIndex = text.indexOf('{');
+        const endIndex = text.lastIndexOf('}');
+
+        if (startIndex !== -1 && endIndex !== -1) {
+            const jsonString = text.substring(startIndex, endIndex + 1);
+
+            try {
+                const potentialBookPlan = JSON.parse(jsonString);
+                if (potentialBookPlan.bookPlan && potentialBookPlan.bookPlan.title) {
+                    return potentialBookPlan;
+                }
+            } catch (error) {
+                console.error("Error parsing potential book plan JSON:", error);
+            }
+        }
+    }
+
+    console.log("No book plan found in the conversation.");
+    return null;
+};
+
 // Updated addUserMsg to include thread_id as parameter
 const addUserMsg = async (thread_id, message) => {
     console.log(`Adding user message: ${message}`);
