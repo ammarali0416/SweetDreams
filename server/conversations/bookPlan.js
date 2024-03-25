@@ -5,7 +5,7 @@ const openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY
 });
 
-let myThread = null;
+export let myThread = null;
 
 export const ensureThreadExists = async () => {
     if (!myThread) {
