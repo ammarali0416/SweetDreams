@@ -1,46 +1,66 @@
-import { system_message } from "../prompts/prompt_BookOutlining.js";
 import OpenAI from 'openai';
 import 'dotenv/config';
+import { system_message } from "../prompts/prompt_BookOutlining.js";
 
-let outlineComplete = false
-
-const openai = new OpenAI({
-    apiKey: process.env.OPENAI_API_KEY
-});
-
-
-let msg_array = [
-    { "role": "system", "content": system_message },
-    { "role": "user", "content": "BEGIN" },
-];
-
-while (outlineComplete === false) {
-    const response = await openai.chat.completions.create({
-        model: "gpt-4",
-        messages: msg_array,
-        temperature: 1,
-        max_tokens: 5000,
-        top_p: 1,
-        frequency_penalty: 0,
-        presence_penalty: 0,
-    });
-    console.log(response.usage)
-    msg_array.push(response.choices[0].message)
-
-    let assistant_msg = response.choices[0].message.content
-
-    if (assistant_msg.includes("<<OUTLINE COMPLETE>>")) {
-        console.log("Outline complete")
-        outlineComplete = true;
-    } else {
-        console.log("Outline not complete yet")
-        msg_array.push({ "role": "user", "content": "NEXT" });
+class OutlineGenerator {
+    constructor(apiKey, systemMessage) {
+        this.openai = new OpenAI({ apiKey });
+        this.systemMessage = systemMessage;
+        this.msgArray = [
+            { "role": "system", "content": systemMessage },
+            { "role": "user", "content": "BEGIN" }
+        ];
+        this.outlineComplete = false;
     }
+
+    async sendChatCompletion() {
+        return await this.openai.chat.completions.create({
+            model: "gpt-4",
+            messages: this.msgArray,
+            temperature: 1,
+            max_tokens: 5000,
+            top_p: 1,
+            frequency_penalty: 0,
+            presence_penalty: 0,
+        });
+    }
+
+    async generate(returnvals = false) {
+        let response;
+        while (!this.outlineComplete) {
+            response = await this.sendChatCompletion();
+            console.log(response.usage);
+            this.msgArray.push(response.choices[0].message);
+
+            if (response.choices[0].message.content.includes("<<OUTLINE COMPLETE>>")) {
+                console.log("Outline complete");
+                this.outlineComplete = true;
+            } else {
+                console.log("Outline not complete yet");
+                this.msgArray.push({ "role": "user", "content": "NEXT" });
+            }
+        }
+
+        if (returnvals) {
+            return { msgArray: this.msgArray, usage: response.usage };
+        }
+    }
+
+    getOutline() {
+        // Filter messages where the role is "assistant" and map to get just the content
+        const assistantMessagesContent = this.msgArray
+            .filter(msg => msg.role === "assistant")
+            .map(msg => msg.content);
+        return assistantMessagesContent;
+    }
+
 }
 
-if (outlineComplete) {
-    console.log('total tokens used: ', response.usage)
-    for (let i = 1; i < msg_array.length; i++) {
-        console.log(`role: ${msg_array[i].role} msg: ${msg_array[i].content}`)
-    }
+async function run() {
+    const generator = new OutlineGenerator(process.env.OPENAI_API_KEY, system_message);
+    await generator.generate();
+    const outline = generator.getOutline();
+    console.log(type(outline));
 }
+
+run();
