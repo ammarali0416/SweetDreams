@@ -1,27 +1,30 @@
 import OpenAI from 'openai';
 import 'dotenv/config';
-import { system_message } from "../prompts/prompt_BookOutlining.js";
+import { SystemMessage } from "../prompts/prompt_BookOutlining.js";
 
-class OutlineGenerator {
-    constructor(apiKey, systemMessage) {
+
+export class OutlineGenerator {
+    constructor(apiKey) {
         this.openai = new OpenAI({ apiKey });
-        this.systemMessage = systemMessage;
+        this.systemMessage = SystemMessage;
         this.msgArray = [
-            { "role": "system", "content": systemMessage },
+            { "role": "system", "content": SystemMessage },
             { "role": "user", "content": "BEGIN" }
         ];
+        this.outline = [];
         this.outlineComplete = false;
     }
 
     async sendChatCompletion() {
         return await this.openai.chat.completions.create({
-            model: "gpt-4",
+            model: "gpt-4-turbo-preview",
             messages: this.msgArray,
             temperature: 1,
-            max_tokens: 5000,
+            max_tokens: 4096,
             top_p: 1,
             frequency_penalty: 0,
             presence_penalty: 0,
+            response_format: { "type": "json_object" }
         });
     }
 
@@ -31,6 +34,7 @@ class OutlineGenerator {
             response = await this.sendChatCompletion();
             console.log(response.usage);
             this.msgArray.push(response.choices[0].message);
+            this.outline.push(JSON.parse(response.choices[0].message.content));
 
             if (response.choices[0].message.content.includes("<<OUTLINE COMPLETE>>")) {
                 console.log("Outline complete");
@@ -46,21 +50,15 @@ class OutlineGenerator {
         }
     }
 
-    getOutline() {
-        // Filter messages where the role is "assistant" and map to get just the content
-        const assistantMessagesContent = this.msgArray
-            .filter(msg => msg.role === "assistant")
-            .map(msg => msg.content);
-        return assistantMessagesContent;
-    }
-
 }
 
-async function run() {
-    const generator = new OutlineGenerator(process.env.OPENAI_API_KEY, system_message);
-    await generator.generate();
-    const outline = generator.getOutline();
-    console.log(type(outline));
-}
+// async function run() {
+//     const generator = new OutlineGenerator(process.env.OPENAI_API_KEY, SystemMessage);
+//     await generator.generate();
+//     const outline = generator.outline;
+//     console.log(outline);
+//     console.log(typeof outline);
+//     console.log(JSON.stringify(outline, null, 2))
+// }
 
-run();
+// run();
