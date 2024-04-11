@@ -38,6 +38,7 @@ app.post('/chat', async (req, res) => {
     const isSummaryComplete = botReply.includes('"status": "Summary Complete"');
     if (isSummaryComplete) {
       const bookPlan = await getBookPlan(myThread.id);
+      console.log('Book Plan:', bookPlan);
       // simulate storing the book plan in the database
       const filePath = path.join(__dirname, 'BookPlans', 'BookPlan.json');
       fs.writeFileSync(filePath, JSON.stringify(bookPlan));
@@ -55,7 +56,7 @@ app.get('/bookOutline', async (req, res) => {
     const generator = new OutlineGenerator(process.env.OPENAI_API_KEY);
     await generator.generate();
     const outline = generator.outline;
-
+    console.log(outline);
     const filePath = path.join(__dirname, 'BookOutlines', 'BookOutline.json');
     fs.writeFileSync(filePath, JSON.stringify(outline));
     

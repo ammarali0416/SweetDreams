@@ -1,14 +1,17 @@
 import OpenAI from 'openai';
 import 'dotenv/config';
-import { SystemMessage } from "../prompts/prompt_BookOutlining.js";
+import { generateSystemMessage } from "../prompts/prompt_BookOutlining.js";
 
 
 export class OutlineGenerator {
+
+    
+
     constructor(apiKey) {
         this.openai = new OpenAI({ apiKey });
-        this.systemMessage = SystemMessage;
+        this.systemMessage = generateSystemMessage("./BookPlans/BookPlan.json");;
         this.msgArray = [
-            { "role": "system", "content": SystemMessage },
+            { "role": "system", "content": this.systemMessage },
             { "role": "user", "content": "BEGIN" }
         ];
         this.outline = [];

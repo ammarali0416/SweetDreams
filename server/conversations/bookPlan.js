@@ -78,7 +78,7 @@ const getBotReply = async (thread_id) => {
             (thread_id),
             (myRun.id)
         );
-        console.log(`Run status: ${keepRetrievingRun.status}`);
+        //console.log(`Run status: ${keepRetrievingRun.status}`);
 
         if (keepRetrievingRun.status === "completed") {
             console.log("\n");
