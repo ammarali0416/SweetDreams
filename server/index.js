@@ -1,12 +1,12 @@
 import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
-import { ensureThreadExists, handleChatInteraction, getBookPlan, myThread } from './conversations/bookPlan.js';
+import { ensureThreadExists, handleChatInteraction, getBookPlan, myThread } from './conversations/Plan.js';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
-import { OutlineGenerator } from './conversations/bookOutlining.js';
+import { OutlineGenerator } from './conversations/Outlining.js';
 //import BookOutline from './BookOutlines/BookOutline.json' assert {type: "json"};
 
 

@@ -1,12 +1,10 @@
 import OpenAI from 'openai';
 import 'dotenv/config';
-import { generateSystemMessage } from "../prompts/prompt_BookOutlining.js";
+import { generateSystemMessage } from "../prompts/prompt_Outlining.js";
 
 
 export class OutlineGenerator {
-
     
-
     constructor(apiKey) {
         this.openai = new OpenAI({ apiKey });
         this.systemMessage = generateSystemMessage("./BookPlans/BookPlan.json");;

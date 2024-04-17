@@ -1,1 +1,36 @@
-{"bookPlan":{"title":"The Journey of Brave Bella","targetAudience":{"ageRange":"8-10 years","gradeLevel":"3rd to 4th grade"},"wordCount":4500,"bookType":"Chapter Book","plot":"Bella, a small yet courageous bird, decides to venture out of her nest to explore the world, despite warnings from her parents. She encounters various challenges but overcomes them, learning valuable lessons along the way.","setting":{"primaryLocation":"The Enchanted Forest","timePeriod":"Undefined magical time","additionalDetails":"The Enchanted Forest is full of magical creatures with beautiful flora and fauna."},"themesAndMessages":["The value of bravery","Importance of perseverance","Learning from mistakes"],"mainCharacters":[{"name":"Bella","description":"A small, fearless bird with a curious nature.","role":"Protagonist"},{"name":"Mr. Owl","description":"A wise, old owl who guides Bella during her journey.","role":"Supporting Character"}],"illustrativeStyle":"Detailed and vibrant color illustrations, showcasing the enchanting forest and its inhabitants.","writingStyle":"Engaging and easy-to-read text, with a balance of narration, dialogue, and reflection."}}
+{
+    "bookPlan": {
+        "title": "The Journey of Brave Bella",
+        "targetAudience": {
+            "ageRange": "8-10 years",
+            "gradeLevel": "3rd to 4th grade"
+        },
+        "wordCount": 4500,
+        "bookType": "Chapter Book",
+        "plot": "Bella, a small yet courageous bird, decides to venture out of her nest to explore the world, despite warnings from her parents. She encounters various challenges but overcomes them, learning valuable lessons along the way.",
+        "setting": {
+            "primaryLocation": "The Enchanted Forest",
+            "timePeriod": "Undefined magical time",
+            "additionalDetails": "The Enchanted Forest is full of magical creatures with beautiful flora and fauna."
+        },
+        "themesAndMessages": [
+            "The value of bravery",
+            "Importance of perseverance",
+            "Learning from mistakes"
+        ],
+        "mainCharacters": [
+            {
+                "name": "Bella",
+                "description": "A small, fearless bird with a curious nature.",
+                "role": "Protagonist"
+            },
+            {
+                "name": "Mr. Owl",
+                "description": "A wise, old owl who guides Bella during her journey.",
+                "role": "Supporting Character"
+            }
+        ],
+        "illustrativeStyle": "Detailed and vibrant color illustrations, showcasing the enchanting forest and its inhabitants.",
+        "writingStyle": "Engaging and easy-to-read text, with a balance of narration, dialogue, and reflection."
+    }
+}
