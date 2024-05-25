@@ -1,8 +1,8 @@
 import React from 'react';
 import './App.css';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Login from './Components/Login';
-import SweetDreams from './Components/SweetDreams'; 
+import Login from './Components/Login/Login';
+import SweetDreams from './Components/SweetDreams/SweetDreams'; 
 //import Dashboard from './Components/App'; 
 //import ErrorPage from './Components/ErrorPage'; 
 

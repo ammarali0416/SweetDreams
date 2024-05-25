@@ -1,11 +1,14 @@
 import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
-import { ensureThreadExists, handleChatInteraction, getBookPlan, myThread } from './conversations/bookPlan.js';
+import { ensureThreadExists, handleChatInteraction, getBookPlan, myThread } from './conversations/Plan.js';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
+import { OutlineGenerator } from './conversations/Outlining.js';
+//import BookOutline from './BookOutlines/BookOutline.json' assert {type: "json"};
+
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -32,9 +35,11 @@ app.post('/chat', async (req, res) => {
     const botReply = await handleChatInteraction(userMessage);
 
     // Check if botReply contains the string
-    const isSummaryComplete = JSON.stringify(botReply).includes('<status>Summary Complete</status>');
+    const isSummaryComplete = botReply.includes('"status": "Summary Complete"');
     if (isSummaryComplete) {
       const bookPlan = await getBookPlan(myThread.id);
+      console.log('Book Plan:', bookPlan);
+      // simulate storing the book plan in the database
       const filePath = path.join(__dirname, 'BookPlans', 'BookPlan.json');
       fs.writeFileSync(filePath, JSON.stringify(bookPlan));
     }
@@ -43,6 +48,23 @@ app.post('/chat', async (req, res) => {
   } catch (error) {
     console.error('Error handling chat interaction:', error);
     res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+app.get('/bookOutline', async (req, res) => {
+  try {
+    const generator = new OutlineGenerator(process.env.OPENAI_API_KEY);
+    await generator.generate();
+    const outline = generator.outline;
+    console.log(outline);
+    const filePath = path.join(__dirname, 'BookOutlines', 'BookOutline.json');
+    fs.writeFileSync(filePath, JSON.stringify(outline));
+    
+    res.json({ status: 'outline complete', outline: JSON.stringify(outline)});
+  } catch (error) {
+    console.error('Error generating book outline:', error);
+    res.status(500).json({ error: 'Internal server error' });
+
   }
 });
 
