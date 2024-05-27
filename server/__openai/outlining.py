@@ -1,6 +1,6 @@
 from .utils import OpenAIBase
 
-from ..models.messages import Message, ChatCompletionResponse
+from models.openai import Message, ChatCompletionResponse
 
 class OutlineGenerator(OpenAIBase):
     def __init__(self, api_key: str, system_message_path: str):
