@@ -47,7 +47,8 @@ class BookPlanner(OpenAIBase):
                 #print("\n")
                 allMessages = self.openai.beta.threads.messages.list(thread_id=self.thread_id)
                 bot_msg = Message(role=allMessages.data[0].role,
-                                  content=allMessages.data[0].content[0].text.value)
+                                  content=allMessages.data[0].content[0].text.value,
+                                  thread_id=self.thread_id)
                 return bot_msg
             elif keepRetrievingRun.status in ["queued", "in_progress"]:
                 time.sleep(1)

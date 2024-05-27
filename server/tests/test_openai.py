@@ -47,6 +47,8 @@ def test_openai_bookplanner():
     bookPlan = book_planner.get_book_plan()
 
     print('this is the book plan', bookPlan)
+
+    print('type of book plan', type(bookPlan))
     
 
     

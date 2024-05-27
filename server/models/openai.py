@@ -4,6 +4,11 @@ from typing import List, Optional, Dict
 class Message(BaseModel):
     role: str
     content: str
+    thread_id: Optional[str] = None
+
+class OutlineCompleteMessage(Message):
+    status: str
+    outline: Dict
 
 class Choice(BaseModel):
     index: int
