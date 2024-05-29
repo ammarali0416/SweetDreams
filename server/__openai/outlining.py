@@ -14,6 +14,7 @@ from typing import List, Dict
 class OutlineGenerator(OpenAIBase):
     def __init__(self, api_key: str, thread_id: str):
         super().__init__(api_key)
+        self.thread_id = thread_id
         self.system_message = self.generate_system_message(thread_id)
         self.msgArray = [
             Message(role="system", content=self.system_message),

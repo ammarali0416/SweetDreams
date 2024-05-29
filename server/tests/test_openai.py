@@ -2,6 +2,10 @@ from __openai.utils import OpenAIBase
 from __openai.planning import BookPlanner 
 from __openai.outlining import OutlineGenerator
 
+from database.database import engine
+from database.crud import add_chapters
+from sqlmodel import Session
+
 from models.openai import (
     Message,
     ChatCompletion,
@@ -46,10 +50,13 @@ def test_openai_outlining():
     # Act
     outliner.generate(returnvals=True)
     #print(outliner.outline)
-    print(type(outliner.outline))
+    """print(type(outliner.outline))
     for outline in outliner.outline:
         print(outline)
-    print(type(outliner.outline[0]))
+    print(type(outliner.outline[0]))"""
+
+    with Session(engine) as db:
+        add_chapters(db, outliner.thread_id, outliner.outline)
     #print(outliner.system_message)
 
 """def test_openai_bookplanner():
