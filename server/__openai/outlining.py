@@ -1,35 +1,44 @@
-from .utils import OpenAIBase
+from __openai.utils import OpenAIBase
+from __openai.prompts.prompt_outlining import systemMessage as prompt
 
-from models.openai import Message, ChatCompletionResponse
+from models.openai import Message, ChatCompletion
+from models.database import BookPlan
+
+from database.crud import get_bookplan
+from database.database import engine
+
+from sqlmodel import Session
+from fastapi import Depends
+from typing import List, Dict
 
 class OutlineGenerator(OpenAIBase):
-    def __init__(self, api_key: str, system_message_path: str):
+    def __init__(self, api_key: str, thread_id: str):
         super().__init__(api_key)
-        self.system_message = self.generate_system_message(system_message_path)
+        self.system_message = self.generate_system_message(thread_id)
         self.msgArray = [
             Message(role="system", content=self.system_message),
             Message(role="user", content="BEGIN")
         ]
-        self.outline = []
-        self.outlineComplete = False
+        self.outline: List[Dict] = []
+        self.outlineComplete: bool = False
 
-    def generate_system_message(self, path: str) -> str:
-        # Implement the logic to read and generate the system message from the given path
-        # For now, let's assume it reads a file and returns its content as a string
-        with open(path, 'r') as file:
-            return file.read()
+    def generate_system_message(self, thread_id: str) -> str:
+        with Session(engine) as db:
+            book_plan = get_bookplan(db=db, thread_id=thread_id)
+            return prompt + book_plan.Book_Plan
 
-    async def send_chat_completion(self) -> ChatCompletionResponse:
-        return await super().send_chat_completion(self.msgArray, temperature=1, max_tokens=4096, top_p=1, frequency_penalty=0, presence_penalty=0)
+    def send_chat_completion(self) -> ChatCompletion:
+        return super().send_chat_completion(self.msgArray, temperature=1, max_tokens=4096, top_p=1, frequency_penalty=0, presence_penalty=0, response_format={'type': "json_object"})
 
-    async def generate(self, returnvals: bool = False) -> dict:
+    def generate(self, returnvals: bool = False) -> dict:
         while not self.outlineComplete:
-            response = await self.send_chat_completion()
+            print(self.msgArray[-1])
+            response = self.send_chat_completion()
             print(response.usage)
-            self.msgArray.append(response.choices[0])
-            self.outline.append(response.choices[0].content)
+            self.msgArray.append(response.choices.message)
+            self.outline.append(response.choices.message.content)
 
-            if "<<OUTLINE COMPLETE>>" in response.choices[0].content:
+            if "<<OUTLINE COMPLETE>>" in response.choices.message.content:
                 print("Outline complete")
                 self.outlineComplete = True
             else:

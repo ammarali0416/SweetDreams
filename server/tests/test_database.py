@@ -1,10 +1,10 @@
-from database.database import engine, create_db_and_tables
+from database.database import engine
 from sqlmodel import Session, SQLModel, create_engine
 from models.database import BookPlan
+from database.crud import add_bookplan, get_bookplan
 
 # Create a test session
 def test_get_session():
-    create_db_and_tables()
     with Session(engine) as session:
         assert session is not None
         assert session.is_active is True
@@ -16,3 +16,10 @@ def test_get_session():
 
         
 
+def test_get_bookplan():
+    res = get_bookplan(db=Session(engine), thread_id="thread_kSKdwqhRIaaZctHVZrYVOcla")
+    print(res)
+    assert res is not None
+    assert res.Thread_ID == "thread_kSKdwqhRIaaZctHVZrYVOcla"
+    assert isinstance(res, BookPlan)
+    assert isinstance(res.Book_Plan, str)
