@@ -8,7 +8,6 @@ from database.crud import get_bookplan
 from database.database import engine
 
 from sqlmodel import Session
-from fastapi import Depends
 from typing import List, Dict
 
 class OutlineGenerator(OpenAIBase):

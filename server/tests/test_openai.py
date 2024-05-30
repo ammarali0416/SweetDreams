@@ -1,9 +1,10 @@
 from __openai.utils import OpenAIBase
 from __openai.planning import BookPlanner 
 from __openai.outlining import OutlineGenerator
+from __openai.writing import Author
 
 from database.database import engine
-from database.crud import add_chapters
+from database.crud import add_chapter_outlines
 from sqlmodel import Session
 
 from models.openai import (
@@ -16,7 +17,7 @@ from config import settings
 import asyncio
 
 # Unit test to check if the OpenAIBase class is correctly implemented with Pydantic models
-def test_openai_base_send_chat_completion():
+"""def test_openai_base_send_chat_completion():
     # Arrange
     openai_base = OpenAIBase(settings.openai_api_key)
 
@@ -35,9 +36,9 @@ def test_openai_base_send_chat_completion():
     assert isinstance(response.usage, Usage)
     assert isinstance(response.choices.message, Message)
     assert isinstance(response.choices.message.content, str)
-    #print(response.choices.message.content)
+    #print(response.choices.message.content)"""
 
-def test_openai_outlining():
+"""def test_openai_outlining():
     # Arrange
     outliner = OutlineGenerator(api_key=settings.openai_api_key, thread_id='thread_7ZRKB713hLura3A4K1wx1Rrc')
     
@@ -48,16 +49,26 @@ def test_openai_outlining():
     assert outliner.msgArray[0].content == outliner.system_message
 
     # Act
-    outliner.generate(returnvals=True)
+    #outliner.generate(returnvals=True)
     #print(outliner.outline)
-    """print(type(outliner.outline))
-    for outline in outliner.outline:
-        print(outline)
-    print(type(outliner.outline[0]))"""
 
-    with Session(engine) as db:
-        add_chapters(db, outliner.thread_id, outliner.outline)
-    #print(outliner.system_message)
+
+    #with Session(engine) as db:
+     #   add_chapter_outlines(db, outliner.thread_id, outliner.outline)
+    #print(outliner.system_message)"""
+
+def test_openai_author():
+    # Arrange
+    author = Author(api_key=settings.openai_api_key, thread_id='thread_7ZRKB713hLura3A4K1wx1Rrc')
+
+    # Act
+    assert author.system_message is not None
+    assert isinstance(author.system_message, str)
+
+    # Act
+    author.write()
+    
+    print(author.chapters)
 
 """def test_openai_bookplanner():
     # Arrange

@@ -12,10 +12,13 @@ def add_bookplan(db: Session, thread_id: str, book_plan: str) -> BookPlan:
     db.refresh(book_plan)
     return book_plan
 
-def get_bookplan(db: Session, thread_id: str) -> None:
+def get_bookplan(db: Session, thread_id: str) -> BookPlan:
     return db.exec(select(BookPlan).filter(BookPlan.Thread_ID == thread_id)).first()
 
-def add_chapters(db: Session, thread_id: str, chapters: list[str]) -> list[ChapterOutlines]:
+def get_chapter_outlines(db: Session, thread_id: str) -> list[ChapterOutlines]:
+    return db.exec(select(ChapterOutlines).filter(ChapterOutlines.Thread_ID == thread_id).order_by(ChapterOutlines.Chapter_Num.asc())).all()
+
+def add_chapter_outlines(db: Session, thread_id: str, chapters: list[str]) -> list[ChapterOutlines]:
     for chapter in chapters:
         chapter_json = json.loads(chapter)
         chapter_outline: ChapterOutlines = ChapterOutlines(Thread_ID=thread_id,
@@ -32,8 +35,9 @@ def add_chapters(db: Session, thread_id: str, chapters: list[str]) -> list[Chapt
         db.add(chapter_outline)
     db.commit()
 
-    chapter_outlines = db.exec(select(ChapterOutlines).filter(ChapterOutlines.Thread_ID == thread_id).order_by(ChapterOutlines.Chapter_Num.asc())).all()
+    chapter_outlines = get_chapter_outlines(db=db, thread_id=thread_id)
 
 
     return chapter_outlines
+
     

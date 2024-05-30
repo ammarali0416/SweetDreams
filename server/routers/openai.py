@@ -13,7 +13,7 @@ from database.database import get_session
 
 from database.crud import (
     add_bookplan,
-    add_chapters)
+    add_chapter_outlines)
 
 router = APIRouter(
     prefix="/openai",
@@ -48,4 +48,4 @@ def get_chapter_outlines(thread_id: str, db:db_dep) -> List[ChapterOutlines]:
     """
     chapter_outlines: List[Dict] = generate_chapter_outlines(thread_id)
 
-    return add_chapters(db=db, thread_id=thread_id, chapters=chapter_outlines)
+    return add_chapter_outlines(db=db, thread_id=thread_id, chapters=chapter_outlines)
