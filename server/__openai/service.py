@@ -1,4 +1,5 @@
 from __openai.planning import BookPlanner
+from __openai.outlining import OutlineGenerator
 from models.openai import (
     Message,
     OutlineCompleteMessage,
@@ -6,7 +7,8 @@ from models.openai import (
     Choice,
     Usage
 )
-from typing import Optional, Union
+
+from typing import Optional, Union, List, Dict
 from config import settings
 
 def planning_convo(user_message: Message, thread_id: Optional[str] = None) -> Union[Message, OutlineCompleteMessage]:
@@ -27,3 +29,11 @@ def planning_convo(user_message: Message, thread_id: Optional[str] = None) -> Un
         return OutlineCompleteMessage(role=bot_reply.role, content=bot_reply.content, thread_id=bot_reply.thread_id, status="Summary Complete", outline=outline)
     
     return bot_reply
+
+def generate_chapter_outlines(thread_id: str) -> List[Dict]:
+    outline_generator = OutlineGenerator(api_key=settings.openai_api_key, thread_id=thread_id)
+
+    outline_generator.generate(returnvals=False)
+
+    return outline_generator.outline
+

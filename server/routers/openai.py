@@ -1,13 +1,19 @@
 from fastapi import APIRouter, HTTPException, Depends
-from typing import Union, Annotated
+from typing import Union, Annotated, List, Dict
 from sqlmodel import Session
 
 from models.openai import OutlineCompleteMessage, Message
-from models.database import BookPlan
+from models.database import BookPlan, ChapterOutlines
 
-from __openai.service import planning_convo
+from __openai.service import (
+    planning_convo,
+    generate_chapter_outlines)
+
 from database.database import get_session
-from database.crud import add_bookplan
+
+from database.crud import (
+    add_bookplan,
+    add_chapters)
 
 router = APIRouter(
     prefix="/openai",
@@ -31,3 +37,15 @@ def open_ai_assistant_chat(message: Message, db:db_dep) -> Union[OutlineComplete
         return response
     else:
         return response
+    
+@router.get("/chapter_outlines/{thread_id}",
+            summary="Get the chapter outlines for a book plan.",
+            response_model=list[ChapterOutlines],
+            description="Get the chapter outlines for a book plan, using the book plan corresponding with the supplied thread_id.")
+def get_chapter_outlines(thread_id: str, db:db_dep) -> List[ChapterOutlines]:
+    """
+    Get the chapter outlines for a book plan.
+    """
+    chapter_outlines: List[Dict] = generate_chapter_outlines(thread_id)
+
+    return add_chapters(db=db, thread_id=thread_id, chapters=chapter_outlines)

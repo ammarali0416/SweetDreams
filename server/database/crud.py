@@ -15,7 +15,7 @@ def add_bookplan(db: Session, thread_id: str, book_plan: str) -> BookPlan:
 def get_bookplan(db: Session, thread_id: str) -> None:
     return db.exec(select(BookPlan).filter(BookPlan.Thread_ID == thread_id)).first()
 
-def add_chapters(db: Session, thread_id: str, chapters: list[str]) -> BookPlan:
+def add_chapters(db: Session, thread_id: str, chapters: list[str]) -> list[ChapterOutlines]:
     for chapter in chapters:
         chapter_json = json.loads(chapter)
         chapter_outline: ChapterOutlines = ChapterOutlines(Thread_ID=thread_id,
@@ -31,5 +31,9 @@ def add_chapters(db: Session, thread_id: str, chapters: list[str]) -> BookPlan:
                                                            ThemesAndMessages=chapter_json['ThemesAndMessages'])
         db.add(chapter_outline)
     db.commit()
-    return None
+
+    chapter_outlines = db.exec(select(ChapterOutlines).filter(ChapterOutlines.Thread_ID == thread_id).order_by(ChapterOutlines.Chapter_Num.asc())).all()
+
+
+    return chapter_outlines
     

@@ -31,7 +31,7 @@ class OutlineGenerator(OpenAIBase):
     def send_chat_completion(self) -> ChatCompletion:
         return super().send_chat_completion(self.msgArray, temperature=1, max_tokens=4096, top_p=1, frequency_penalty=0, presence_penalty=0, response_format={'type': "json_object"})
 
-    def generate(self, returnvals: bool = False) -> dict:
+    def generate(self, returnvals: bool = False) -> dict | None:
         while not self.outlineComplete:
             print(self.msgArray[-1])
             response = self.send_chat_completion()
