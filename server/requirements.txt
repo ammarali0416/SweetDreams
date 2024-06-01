@@ -1,0 +1,7 @@
+fastapi[0.111.0]
+openai
+python-dotenv
+pydantic
+pydantic-settings
+sqlmodel
+pytest

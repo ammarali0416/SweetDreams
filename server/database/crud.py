@@ -1,0 +1,51 @@
+from sqlmodel import Session, select
+
+from models.database import BookPlan, ChapterOutlines, Chapter
+
+import json
+
+def add_bookplan(db: Session, thread_id: str, book_plan: str) -> BookPlan:
+    book_plan: BookPlan = BookPlan(Thread_ID=thread_id, Book_Plan=book_plan)
+    db.add(book_plan)
+    db.commit()
+    db.refresh(book_plan)
+    return book_plan
+
+def get_bookplan(db: Session, bookplan_id: int) -> BookPlan:
+    return db.exec(select(BookPlan).filter(BookPlan.BookPlan_ID == bookplan_id)).first()
+
+def get_chapter_outlines(db: Session, bookplan_id: int) -> list[ChapterOutlines]:
+    return db.exec(select(ChapterOutlines).filter(ChapterOutlines.BookPlan_ID == bookplan_id).order_by(ChapterOutlines.Chapter_Num.asc())).all()
+
+def add_chapter_outlines(db: Session, bookplan_id: int, chapters: list[str]) -> list[ChapterOutlines]:
+    for chapter in chapters:
+        chapter_json = json.loads(chapter)
+        chapter_outline: ChapterOutlines = ChapterOutlines(BookPlan_ID=bookplan_id,
+                                                           Chapter_Outline_JSON=chapter,
+                                                           Chapter_Num=chapter_json['Index'],
+                                                           Chapter=chapter_json['Chapter'],
+                                                           EstimatedWordCount=chapter_json['EstimatedWordCount'],
+                                                           Setting=chapter_json['Setting'],
+                                                           MainCharacters=chapter_json['MainCharacters'],
+                                                           PlotDevelopment=chapter_json['PlotDevelopment'],
+                                                           IllustrationIdeas=chapter_json['IllustrationIdeas'],
+                                                           WritingStyleNuances=chapter_json['WritingStyleNuances'],
+                                                           ThemesAndMessages=chapter_json['ThemesAndMessages'])
+        db.add(chapter_outline)
+    db.commit()
+
+    chapter_outlines = get_chapter_outlines(db=db, bookplan_id=bookplan_id)
+
+
+    return chapter_outlines
+
+def add_chapters(db: Session, chapters: list[Chapter]) -> list[Chapter]:
+    for chapter in chapters:
+        db.add(chapter)
+    db.commit()
+    
+    for chapter in chapters:
+        db.refresh(chapter)
+    return chapters
+
+    
