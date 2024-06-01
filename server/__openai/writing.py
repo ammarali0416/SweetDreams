@@ -5,7 +5,7 @@ from sqlmodel import Session
 from config import settings
 
 from models.openai import Message, ChatCompletion
-from models.database import BookPlan, ChapterOutlines
+from models.database import BookPlan, ChapterOutlines, Chapter
 
 from __openai.utils import OpenAIBase
 from __openai.prompts.prompt_writing import systemMessage as AuthorPrompt
@@ -37,11 +37,11 @@ class Summarizer(OpenAIBase):
         )
 
 class Author(OpenAIBase):
-    def __init__(self, api_key: str, thread_id: str):
+    def __init__(self, api_key: str, bookplan_id: str):
         super().__init__(api_key)
         self.system_message: str = AuthorPrompt
-        self.chapters: List[Dict] = []
-        self.thread_id = thread_id
+        self.chapters: List[Chapter] = []
+        self.bookplan_id = bookplan_id
 
     def send_chat_completion(self, message: Message) -> ChatCompletion:
         return super().send_chat_completion(
@@ -59,8 +59,8 @@ class Author(OpenAIBase):
 
     def write(self) -> None:
         with Session(engine) as db:
-            plan = get_bookplan(db=db, thread_id=self.thread_id)
-            outlines = get_chapter_outlines(db=db, thread_id=self.thread_id)
+            plan: BookPlan = get_bookplan(db=db, bookplan_id=self.bookplan_id)
+            outlines: List[ChapterOutlines] = get_chapter_outlines(db=db, bookplan_id=self.bookplan_id)
         
         prior_summaries = []
         
@@ -76,8 +76,11 @@ class Author(OpenAIBase):
             message = Message(role="user", content=message_content)
 
             response = self.send_chat_completion(message)
-            chapter_content = json.loads(response.choices.message.content)
-            self.chapters.append(chapter_content)
+            chapter = Chapter(ChapterOutline_ID=chapter_outline.ChapterOutline_ID, 
+                              BookPlan_ID=chapter_outline.BookPlan_ID,
+                              Chapter_Num=chapter_outline.Chapter_Num,
+                              Chapter=json.loads(response.choices.message.content)['Chapter'])
+            self.chapters.append(chapter)
    
             summary = Summarizer(settings.openai_api_key).send_chat_completion(response.choices.message.content)
             summary_text = summary.choices.message.content

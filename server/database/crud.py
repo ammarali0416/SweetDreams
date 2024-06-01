@@ -1,9 +1,8 @@
 from sqlmodel import Session, select
 
-from models.database import BookPlan, ChapterOutlines
+from models.database import BookPlan, ChapterOutlines, Chapter
 
 import json
-
 
 def add_bookplan(db: Session, thread_id: str, book_plan: str) -> BookPlan:
     book_plan: BookPlan = BookPlan(Thread_ID=thread_id, Book_Plan=book_plan)
@@ -39,5 +38,14 @@ def add_chapter_outlines(db: Session, bookplan_id: int, chapters: list[str]) -> 
 
 
     return chapter_outlines
+
+def add_chapters(db: Session, chapters: list[Chapter]) -> list[Chapter]:
+    for chapter in chapters:
+        db.add(chapter)
+    db.commit()
+    
+    for chapter in chapters:
+        db.refresh(chapter)
+    return chapters
 
     

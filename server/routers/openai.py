@@ -3,17 +3,19 @@ from typing import Union, Annotated, List, Dict
 from sqlmodel import Session
 
 from models.openai import OutlineCompleteMessage, Message
-from models.database import BookPlan, ChapterOutlines
+from models.database import BookPlan, ChapterOutlines, Chapter
 
 from __openai.service import (
     planning_convo,
-    generate_chapter_outlines)
+    generate_chapter_outlines,
+    write_chapters)
 
 from database.database import get_session
 
 from database.crud import (
     add_bookplan,
-    add_chapter_outlines)
+    add_chapter_outlines,
+    add_chapters)
 
 router = APIRouter(
     prefix="/openai",
@@ -49,3 +51,17 @@ def get_chapter_outlines(bookplan_id: str, db:db_dep) -> List[ChapterOutlines]:
     chapter_outlines: List[Dict] = generate_chapter_outlines(bookplan_id)
 
     return add_chapter_outlines(db=db, bookplan_id=bookplan_id, chapters=chapter_outlines)
+
+@router.get("/chapters/{bookplan_id}",
+            summary="Get the fully written chapters for a book plan.",
+            response_model=list[Chapter],
+            description="Get the fully written chapters for a book plan, using the book plan corresponding with the supplied bookplan_id.")
+def get_chapters(bookplan_id: str, db:db_dep) -> List[Chapter]:
+    """
+    Get the fully written chapters for a book plan.
+    """
+    chapters: List[Chapter] = write_chapters(bookplan_id)
+
+    return add_chapters(db=db, chapters=chapters)
+
+

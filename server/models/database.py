@@ -20,3 +20,10 @@ class ChapterOutlines(SQLModel, table=True):
     IllustrationIdeas: str
     WritingStyleNuances: str
     ThemesAndMessages: str
+
+class Chapter(SQLModel, table=True):
+    Chapter_ID: Optional[int] = Field(default=None, primary_key=True)
+    ChapterOutline_ID: int = Field(foreign_key="chapteroutlines.ChapterOutline_ID")
+    BookPlan_ID: int = Field(foreign_key="bookplan.BookPlan_ID")
+    Chapter_Num: int
+    Chapter: str

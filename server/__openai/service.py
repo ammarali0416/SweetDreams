@@ -1,5 +1,6 @@
 from __openai.planning import BookPlanner
 from __openai.outlining import OutlineGenerator
+from __openai.writing import Author
 from models.openai import (
     Message,
     OutlineCompleteMessage,
@@ -7,7 +8,7 @@ from models.openai import (
     Choice,
     Usage
 )
-
+from models.database import Chapter
 from typing import Optional, Union, List, Dict
 from config import settings
 
@@ -36,4 +37,10 @@ def generate_chapter_outlines(bookplan_id: int) -> List[Dict]:
     outline_generator.generate(returnvals=False)
 
     return outline_generator.outline
+
+def write_chapters(bookplan_id: int) -> List[Chapter]:
+    author = Author(api_key=settings.openai_api_key, bookplan_id=bookplan_id)
+    author.write()
+
+    return author.chapters
 
