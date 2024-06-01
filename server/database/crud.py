@@ -12,16 +12,16 @@ def add_bookplan(db: Session, thread_id: str, book_plan: str) -> BookPlan:
     db.refresh(book_plan)
     return book_plan
 
-def get_bookplan(db: Session, thread_id: str) -> BookPlan:
-    return db.exec(select(BookPlan).filter(BookPlan.Thread_ID == thread_id)).first()
+def get_bookplan(db: Session, bookplan_id: int) -> BookPlan:
+    return db.exec(select(BookPlan).filter(BookPlan.BookPlan_ID == bookplan_id)).first()
 
-def get_chapter_outlines(db: Session, thread_id: str) -> list[ChapterOutlines]:
-    return db.exec(select(ChapterOutlines).filter(ChapterOutlines.Thread_ID == thread_id).order_by(ChapterOutlines.Chapter_Num.asc())).all()
+def get_chapter_outlines(db: Session, bookplan_id: int) -> list[ChapterOutlines]:
+    return db.exec(select(ChapterOutlines).filter(ChapterOutlines.BookPlan_ID == bookplan_id).order_by(ChapterOutlines.Chapter_Num.asc())).all()
 
-def add_chapter_outlines(db: Session, thread_id: str, chapters: list[str]) -> list[ChapterOutlines]:
+def add_chapter_outlines(db: Session, bookplan_id: int, chapters: list[str]) -> list[ChapterOutlines]:
     for chapter in chapters:
         chapter_json = json.loads(chapter)
-        chapter_outline: ChapterOutlines = ChapterOutlines(Thread_ID=thread_id,
+        chapter_outline: ChapterOutlines = ChapterOutlines(BookPlan_ID=bookplan_id,
                                                            Chapter_Outline_JSON=chapter,
                                                            Chapter_Num=chapter_json['Index'],
                                                            Chapter=chapter_json['Chapter'],
@@ -35,7 +35,7 @@ def add_chapter_outlines(db: Session, thread_id: str, chapters: list[str]) -> li
         db.add(chapter_outline)
     db.commit()
 
-    chapter_outlines = get_chapter_outlines(db=db, thread_id=thread_id)
+    chapter_outlines = get_chapter_outlines(db=db, bookplan_id=bookplan_id)
 
 
     return chapter_outlines

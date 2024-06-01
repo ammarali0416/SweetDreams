@@ -9,7 +9,7 @@ class BookPlan(SQLModel, table=True):
 
 class ChapterOutlines(SQLModel, table=True):
     ChapterOutline_ID: Optional[int] = Field(default=None, primary_key=True)
-    Thread_ID: str
+    BookPlan_ID: int = Field(foreign_key="bookplan.BookPlan_ID")
     Chapter_Outline_JSON: str
     Chapter_Num: int
     Chapter: str

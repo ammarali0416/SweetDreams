@@ -38,14 +38,14 @@ def open_ai_assistant_chat(message: Message, db:db_dep) -> Union[OutlineComplete
     else:
         return response
     
-@router.get("/chapter_outlines/{thread_id}",
+@router.get("/chapter_outlines/{bookplan_id}",
             summary="Get the chapter outlines for a book plan.",
             response_model=list[ChapterOutlines],
-            description="Get the chapter outlines for a book plan, using the book plan corresponding with the supplied thread_id.")
-def get_chapter_outlines(thread_id: str, db:db_dep) -> List[ChapterOutlines]:
+            description="Get the chapter outlines for a book plan, using the book plan corresponding with the supplied bookplan_id.")
+def get_chapter_outlines(bookplan_id: str, db:db_dep) -> List[ChapterOutlines]:
     """
     Get the chapter outlines for a book plan.
     """
-    chapter_outlines: List[Dict] = generate_chapter_outlines(thread_id)
+    chapter_outlines: List[Dict] = generate_chapter_outlines(bookplan_id)
 
-    return add_chapter_outlines(db=db, thread_id=thread_id, chapters=chapter_outlines)
+    return add_chapter_outlines(db=db, bookplan_id=bookplan_id, chapters=chapter_outlines)

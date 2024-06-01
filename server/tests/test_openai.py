@@ -38,9 +38,9 @@ import asyncio
     assert isinstance(response.choices.message.content, str)
     #print(response.choices.message.content)"""
 
-"""def test_openai_outlining():
+def test_openai_outlining():
     # Arrange
-    outliner = OutlineGenerator(api_key=settings.openai_api_key, thread_id='thread_7ZRKB713hLura3A4K1wx1Rrc')
+    outliner = OutlineGenerator(api_key=settings.openai_api_key, bookplan_id=12)
     
     # Act
     assert outliner.system_message is not None
@@ -49,15 +49,14 @@ import asyncio
     assert outliner.msgArray[0].content == outliner.system_message
 
     # Act
-    #outliner.generate(returnvals=True)
-    #print(outliner.outline)
+    outliner.generate(returnvals=True)
+    print(outliner.outline)
 
 
-    #with Session(engine) as db:
-     #   add_chapter_outlines(db, outliner.thread_id, outliner.outline)
-    #print(outliner.system_message)"""
+    with Session(engine) as db:
+       add_chapter_outlines(db, outliner.bookplan_id, outliner.outline)
 
-def test_openai_author():
+"""def test_openai_author():
     # Arrange
     author = Author(api_key=settings.openai_api_key, thread_id='thread_7ZRKB713hLura3A4K1wx1Rrc')
 
@@ -68,7 +67,7 @@ def test_openai_author():
     # Act
     author.write()
     
-    print(author.chapters)
+    print(author.chapters)"""
 
 """def test_openai_bookplanner():
     # Arrange

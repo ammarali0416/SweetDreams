@@ -11,10 +11,10 @@ from sqlmodel import Session
 from typing import List, Dict
 
 class OutlineGenerator(OpenAIBase):
-    def __init__(self, api_key: str, thread_id: str):
+    def __init__(self, api_key: str, bookplan_id: int):
         super().__init__(api_key)
-        self.thread_id = thread_id
-        self.system_message = self.generate_system_message(thread_id)
+        self.bookplan_id = bookplan_id
+        self.system_message = self.generate_system_message(bookplan_id)
         self.msgArray = [
             Message(role="system", content=self.system_message),
             Message(role="user", content="BEGIN")
@@ -22,9 +22,9 @@ class OutlineGenerator(OpenAIBase):
         self.outline: List[Dict] = []
         self.outlineComplete: bool = False
 
-    def generate_system_message(self, thread_id: str) -> str:
+    def generate_system_message(self, bookplan_id: int) -> str:
         with Session(engine) as db:
-            book_plan = get_bookplan(db=db, thread_id=thread_id)
+            book_plan = get_bookplan(db=db, bookplan_id=bookplan_id)
             return prompt + book_plan.Book_Plan
 
     def send_chat_completion(self) -> ChatCompletion:

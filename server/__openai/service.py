@@ -30,8 +30,8 @@ def planning_convo(user_message: Message, thread_id: Optional[str] = None) -> Un
     
     return bot_reply
 
-def generate_chapter_outlines(thread_id: str) -> List[Dict]:
-    outline_generator = OutlineGenerator(api_key=settings.openai_api_key, thread_id=thread_id)
+def generate_chapter_outlines(bookplan_id: int) -> List[Dict]:
+    outline_generator = OutlineGenerator(api_key=settings.openai_api_key, bookplan_id=bookplan_id)
 
     outline_generator.generate(returnvals=False)
 
