@@ -22,6 +22,8 @@ def test_openai_illustrating():
     I.get_illustration_details()
     I.overall_style_prompt()
     print(I.overall_prompt)
+    I.cover_style_prompt()
+    print(I.cover_prompt)
 
 # Unit test to check if the OpenAIBase class is correctly implemented with Pydantic models
 """def test_openai_base_send_chat_completion():

@@ -37,13 +37,12 @@ Example output:
 
 cover: str = """You need to generate a DALL·E prompt for creating a book cover illustration for a PDF book. The cover should reflect the overall illustrative style and feature the main characters, capturing the essence of the book's plot.
 
-- Overall Illustrative Style: {Overall Illustrative Style}
-- Character Styles: {Character Styles}
-- Book Plot: {Book Plot}
+- Overall Illustrative Style + Character Styles: {OverallStyle}
+- Book Plot: {Plot}
 
 Craft a detailed DALL·E prompt for the book cover, ensuring it incorporates key visual elements that represent the book's theme and main characters. Only include characters who are significant to the book's plot and provide detailed descriptions of their appearances to ensure consistency with the overall illustrative style. The cover should be eye-catching and convey the magical and whimsical nature of the story.
 
 Example output:
 
-"DALL·E, create a watercolor book cover for 'Alice's Adventures'. The cover should feature Alice, wearing a blue dress with a white apron, standing at the edge of a magical forest. She should be depicted in a whimsical and vibrant watercolor style. Include the White Rabbit, wearing a waistcoat and holding a pocket watch, standing near Alice. In the background, add a subtle hint of the Cheshire Cat's smile among the tree branches. The illustration should capture the enchanting and adventurous spirit of the story."
+"Create a watercolor book cover for 'Alice's Adventures'. The cover should feature Alice, wearing a blue dress with a white apron, standing at the edge of a magical forest. She should be depicted in a whimsical and vibrant watercolor style. Include the White Rabbit, wearing a waistcoat and holding a pocket watch, standing near Alice. In the background, add a subtle hint of the Cheshire Cat's smile among the tree branches. The illustration should capture the enchanting and adventurous spirit of the story."
 """
