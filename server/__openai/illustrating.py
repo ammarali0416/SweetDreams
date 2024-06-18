@@ -27,6 +27,7 @@ class Illustrator(OpenAIBase):
 
         self.overall_prompt: str = None
         self.cover_prompt: str = None
+        self.chapter_prompts: Dict[int, str] = {}
 
 
     def get_illustration_details(self) -> None:
@@ -74,3 +75,22 @@ class Illustrator(OpenAIBase):
         )
 
         self.cover_prompt = res.choices.message.content
+    
+    def chapter_style_prompts(self) -> None:
+        for chapter_id, chapter_context, chapter_plot in self.chapter_contexts:
+            sys_msg: str = chapters_images.format(OverallStyle=self.overall_prompt, ChapterGuidelines=chapter_context, ChapterPlot=chapter_plot)
+
+            res: ChatCompletion = super().send_chat_completion(
+                messages=[
+                    Message(role="system", content=sys_msg)
+                ],
+                temperature=1,
+                max_tokens=4096,
+                top_p=1,
+                frequency_penalty=0,
+                presence_penalty=0,
+                response_format={"type": "text"}
+            )
+
+            self.chapter_prompts[chapter_id] = res.choices.message.content
+

@@ -24,6 +24,11 @@ def test_openai_illustrating():
     print(I.overall_prompt)
     I.cover_style_prompt()
     print(I.cover_prompt)
+    I.chapter_style_prompts()
+    for key in I.chapter_prompts:
+        print(I.chapter_prompts[key], ':', key) 
+        print('\n')
+
 
 # Unit test to check if the OpenAIBase class is correctly implemented with Pydantic models
 """def test_openai_base_send_chat_completion():
