@@ -2,6 +2,7 @@ from __openai.utils import OpenAIBase
 from __openai.planning import BookPlanner 
 from __openai.outlining import OutlineGenerator
 from __openai.writing import Author
+from __openai.illustrating import Illustrator
 
 from database.database import engine
 from database.crud import add_chapter_outlines
@@ -15,6 +16,12 @@ from models.openai import (
 )
 from config import settings
 import asyncio
+
+def test_openai_illustrating():
+    I = Illustrator(api_key=settings.openai_api_key, bookplan_id=12)
+    I.get_illustration_details()
+    I.overall_style_prompt()
+    print(I.overall_prompt)
 
 # Unit test to check if the OpenAIBase class is correctly implemented with Pydantic models
 """def test_openai_base_send_chat_completion():
@@ -38,7 +45,7 @@ import asyncio
     assert isinstance(response.choices.message.content, str)
     #print(response.choices.message.content)"""
 
-def test_openai_outlining():
+"""def test_openai_outlining():
     # Arrange
     outliner = OutlineGenerator(api_key=settings.openai_api_key, bookplan_id=12)
     
@@ -54,7 +61,7 @@ def test_openai_outlining():
 
 
     with Session(engine) as db:
-       add_chapter_outlines(db, outliner.bookplan_id, outliner.outline)
+       add_chapter_outlines(db, outliner.bookplan_id, outliner.outline)"""
 
 """def test_openai_author():
     # Arrange

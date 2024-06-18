@@ -5,6 +5,7 @@ class Message(BaseModel):
     role: str
     content: str
     thread_id: Optional[str] = None
+    name: Optional[str] = None
 
 class OutlineCompleteMessage(Message):
     status: str
